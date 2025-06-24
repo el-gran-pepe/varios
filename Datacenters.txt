@@ -1,0 +1,14 @@
+##Temperatura Datacenter
+La temperatura recomendable para un datacenter, según los estándares internacionales (ASHRAE), es la siguiente:
+
+Rango recomendado:
+18 °C a 27 °C
+Rango óptimo:
+22 °C a 25 °C
+
+Recomendación práctica:
+Mantenerlo estable alrededor de 23 °C, con humedad relativa entre 45 % y 55 %.
+
+Riesgos de temperaturas inadecuadas:
++ 27 °C: riesgo de sobrecalentamiento, fallas de hardware y reducción de la vida útil de los equipos.
+- 18 °C: riesgo de condensación, consumo energético innecesario.
