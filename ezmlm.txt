@@ -1,0 +1,156 @@
+/* Todo se debe ejecutar como LISTS */ 
+
+su – lists 
+
+ 
+
+/* Listar suscriptores */  
+
+ezmlm-list /home/lists/nombrelista > nombrelista.txt 
+
+ 
+
+/* Listar moderadores*/  
+
+ezmlm-list /home/lists/mod  
+
+ 
+
+/* Agregar moderadores*/  
+
+ezmlm-list /home/lists/mod mod@dominio 
+
+ 
+
+/* Dar de baja usuarios */ 
+
+Ezmlm-unsub /home/lists/nombrelista mail@mail.com.ar 
+
+   
+
+/* agregar mails a listas existentes */ 
+
+ezmlm-sub /home/lists/nombrelista < lista.txt  
+
+ezmlm-sub /home/lists/nombrelista mail@mail.com.ar 
+
+ 
+
+/* rescatar el log que nos interesa.  */ 
+
+cat /var/log/mail.log |grep mail@mail.com  
+
+|grep mail@mail.com  > result.txt # Opcion si el log es muy largo
+
+cat /var/log/mail.log |grep 'DELIVERY NUMBER'  
+
+|grep mail@mail.com  > result.txt  # Opcion si el log es muy largo tambien
+
+ 
+
+ 
+
+ /* Ver estado del qmail */ 
+
+qmail-qstat #Esto nos mostrara cantidad de mensajes en cola y cantidad de destinatarios pendientes
+
+find /var/qmail/queue/ -iname 123456 #con esto buscamos un msj especifico que podemos obtenerlo de los logs anteriores, lo encontramos fisicamente
+
+vi /var/qmail/queue/mess/22/123456 #abrimos el msj encontrado y podemos ver su contenido;Cabeceras, remitente, destinatario, cuerpo
+
+qmail-tcpok
+qmail-start
+#con esto podemos reintentar enviar los correos pendientes
+
+
+  
+/* Ver cola de envíos pendientes */ 
+
+qmail-qread |grep -c -v done     # Pendientes o fallidos
+
+qmail-qread | grep -c done       # Entregados
+
+
+
+ /* Eliminar mails de la cola de envio */ 
+
+/var/qmail/bin/qmail-remove -r -p 'subject' 
+
+qmHandle -D -S'subject' 
+
+ 
+
+
+/* Donde cambiar el tamaño del mensaje */  
+
+#sorry, that message size exceeds my databytes limit (#5.3.4) 
+
+/var/qmail/control/databytes #este es el archivo a modificar para permitir mas grandes, se configura en Bytes
+
+qmailctl restart  #luego reiniciar
+
+
+ 
+
+/*Ver mensajes*/ 
+
+Ejemplo de delivery en el log --Sep 20 09:57:40 ezmlm qmail: 1537448260.911161 starting delivery 2739144: msg 98110 to remote mail@mail.com.ar 
+
+ezmlm:~# find / -name 98110       
+
+"
+/var/spool/qmail/remote/15/98110  # Mensaje encolado para entrega remota (envío hacia un servidor externo)
+
+/var/spool/qmail/bounce/98110     # Aquí se guarda el archivo de notificación de rebote si el mensaje no pudo ser entregado y falló
+
+/var/spool/qmail/info/15/98110    # Contiene información adicional de enrutamiento o tracking de ese mensaje.
+
+/var/spool/qmail/mess/15/98110    # Este archivo contiene el mensaje completo (headers y cuerpo) tal como fue recibido
+"
+ 
+
+/* Crear con script local */ 
+
+Modo de uso: create_list.sh <nombre de la lista> 
+
+--Luego hay que agregar nombre de la nueva lista a /home/lists/listas  
+
+" #Este es el script para poder crear la lista
+#!/bin/bash
+# create_list.sh <nombre_lista>
+
+LIST_NAME=$1
+BASE_DIR="/home/lists"
+
+mkdir -p $BASE_DIR/$LIST_NAME
+cd $BASE_DIR/$LIST_NAME
+
+# Crear la lista con ezmlm
+ezmlm-make $BASE_DIR/$LIST_NAME $BASE_DIR $LIST_NAME
+
+# Registrar en un archivo de control
+echo $LIST_NAME >> $BASE_DIR/listas
+"
+
+
+ 
+
+#Lista de suscriptores 
+
+nombreLista-list@lists.dominio 
+
+#Ayuda de comandos disponibles  
+
+nombreLista-help@lists.dominio
+ 
+# Suscribir una Direccion 
+
+nombreLista-subscribe-mail=dominio@lists.dominio 
+
+# Dar de baja una Direccion 
+
+nombreLista-unsubscribe-mail=dominio@lists.dominio 
+ 
+#Enviar moderate 
+
+nombreLista@lists.dominio
